@@ -1,0 +1,29 @@
+.container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  padding: 2rem 3rem 0rem 2rem;
+}
+
+.grid {
+  flex: 1;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  white-space: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+  padding: 1rem 1rem 4rem;
+
+  >div {
+    padding: 2rem;
+    display: inline-block;
+    margin-left: 2rem;
+  }
+
+  ::-webkit-scrollbar {
+    display: none;
+  }
+}

@@ -1,0 +1,29 @@
+.container {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  padding: 0rem 3rem;
+}
+
+.grid {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  white-space: nowrap;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding: 0.5rem 1rem 1.5rem;
+
+  >div {
+    display: inline-block;
+    margin-left: 2rem;
+  }
+
+  >div:nth-child(0) {
+    background-color: red;
+  }
+
+  ::-webkit-scrollbar {
+    display: none;
+  }
+}
