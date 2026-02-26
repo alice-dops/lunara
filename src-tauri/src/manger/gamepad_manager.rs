@@ -127,6 +127,15 @@ impl GamepadManager {
         if !self.window.is_focused().unwrap_or(false) {
             return;
         }
+        if btn.is_dpad() {
+            self.dpad_event(time, btn, true);
+        }
+    }
+
+    pub fn button_releassed(&mut self, time: SystemTime, btn: Button, _: Code) {
+        if !self.window.is_focused().unwrap_or(false) {
+            return;
+        }
         if btn.is_action() {
             let label = match btn {
                 Button::North => "Y",
@@ -140,12 +149,6 @@ impl GamepadManager {
             self.send_event_acction_press(label);
             return;
         }
-        if btn.is_dpad() {
-            self.dpad_event(time, btn, true);
-        }
-    }
-
-    pub fn button_releassed(&mut self, time: SystemTime, btn: Button, _: Code) {
         if btn.is_dpad() {
             self.dpad_event(time, btn, false);
         }
