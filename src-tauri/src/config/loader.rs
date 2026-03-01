@@ -1,4 +1,4 @@
-use crate::models::{app_entry::AppEntry, snipsets::Snippet};
+use crate::models::{app_entry::AppEntry, lunara_config::LunaraConfig, snipsets::Snippet};
 use base64::{engine::general_purpose, Engine as _};
 use std::{env, fs, path::PathBuf};
 
@@ -20,14 +20,45 @@ pub fn config_dir() -> PathBuf {
     PathBuf::from(home).join(".config").join("lunara")
 }
 
-pub fn apps_dir() -> PathBuf {
+fn apps_dir() -> PathBuf {
     config_dir().join("apps")
 }
 
-pub fn snippets_dir() -> PathBuf {
+fn snippets_dir() -> PathBuf {
     config_dir().join("snippets")
 }
 
+fn config_file() -> PathBuf {
+    config_dir().join("config.yml")
+}
+
+pub fn load_config() -> LunaraConfig {
+    let path = config_file();
+    if path.exists() {
+        if let Ok(s) = std::fs::read_to_string(&path) {
+            match serde_yml::from_str::<LunaraConfig>(&s) {
+                Ok(conf) => return conf,
+                Err(e) => {
+                    eprintln!("Failed to parse config JSON {}: {}", path.display(), e);
+                }
+            };
+        };
+    };
+
+    LunaraConfig::default()
+}
+
+// pub fn load_file<'a, T>(s: &'a str, yaml: bool) -> Result<T>
+// where
+//     T: Deserialize<'a>,
+// {
+//     if yaml {
+//         serde_yml::from_str::<T>(&s)
+//     } else {
+//         serde_json::from_str::<T>(&s)
+//     }
+// }
+//
 pub fn load_snippets() -> Vec<Snippet> {
     let dir = snippets_dir();
     let _ = fs::create_dir_all(&dir);
@@ -39,14 +70,14 @@ pub fn load_snippets() -> Vec<Snippet> {
 
     for entry in read_dir.flatten() {
         let path = entry.path();
-        if path.extension().and_then(|s| s.to_str()) != Some("json") {
+        if path.extension().and_then(|s| s.to_str()) != Some("yml") {
             continue;
         }
         if let Ok(s) = fs::read_to_string(&path) {
-            match serde_json::from_str::<Snippet>(&s) {
+            match serde_yml::from_str::<Snippet>(&s) {
                 Ok(app) => out.push(app),
                 Err(e) => {
-                    eprintln!("Failed to parse snippet JSON {}: {}", path.display(), e);
+                    eprintln!("Failed to parse snippet {}: {}", path.display(), e);
                 }
             }
         }
@@ -67,11 +98,11 @@ pub fn load_apps() -> Vec<AppEntry> {
 
     for entry in read_dir.flatten() {
         let path = entry.path();
-        if path.extension().and_then(|s| s.to_str()) != Some("json") {
+        if path.extension().and_then(|s| s.to_str()) != Some("yml") {
             continue;
         }
         if let Ok(s) = fs::read_to_string(&path) {
-            if let Ok(mut app) = serde_json::from_str::<AppEntry>(&s) {
+            if let Ok(mut app) = serde_yml::from_str::<AppEntry>(&s) {
                 if let Some(icon_path) = &app.icon {
                     if let Some(data_url) = icon_to_data_url(icon_path) {
                         app.icon = Some(data_url);

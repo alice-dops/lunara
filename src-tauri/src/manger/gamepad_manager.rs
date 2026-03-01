@@ -5,7 +5,7 @@ use std::{
 };
 use tauri::{AppHandle, Emitter, Manager, WebviewWindow};
 
-use crate::system::bspwm::focus_lunara;
+use crate::system::window_manager_controller::WMState;
 
 const DEADZONE: f32 = 0.35;
 const INIT_DELAY_MS: u128 = 250;
@@ -116,7 +116,12 @@ impl GamepadManager {
     }
 
     fn home_button_pressed(&self) {
-        let _ = focus_lunara();
+        let state: tauri::State<'_, WMState> = self.app.state();
+        if self.window.is_focused().unwrap_or(false) {
+            let _ = state.with_wm(|wm| wm.focus_last_app());
+        } else {
+            let _ = state.with_wm(|wm| wm.focus_lunara());
+        };
     }
 
     pub fn button_pressed(&mut self, time: SystemTime, btn: Button, _: Code) {

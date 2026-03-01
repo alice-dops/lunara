@@ -1,8 +1,4 @@
-use crate::{
-    config,
-    models::app_entry::AppEntry,
-    system::{bspwm::launch_or_focus, command::LunaraResult},
-};
+use crate::{config, models::app_entry::AppEntry};
 
 pub struct AppManager {
     apps: Vec<AppEntry>,
@@ -12,6 +8,7 @@ impl AppManager {
     pub fn new() -> Self {
         Self { apps: Vec::new() }
     }
+
     pub fn apps(&self) -> &[AppEntry] {
         &self.apps
     }
@@ -24,11 +21,7 @@ impl AppManager {
         changed
     }
 
-    pub fn run_app(&self, id: String) -> LunaraResult<()> {
-        if let Some(app) = self.apps().iter().find(|app| app.id == id) {
-            launch_or_focus(app)
-        } else {
-            Ok(())
-        }
+    pub fn find_app(&self, id: &str) -> Option<&AppEntry> {
+        self.apps.iter().find(|a| a.id == id)
     }
 }

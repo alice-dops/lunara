@@ -21,6 +21,13 @@ export function SnippetsGrid({ focused }: Props) {
   const focusedRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (selected >= snippets.length) {
+      setSelected(Math.max(snippets.length - 1, 0));
+    }
+
+  }, [snippets])
+
+  useEffect(() => {
     const container = gridRef.current;
     const focused = focusedRef.current;
 
@@ -56,7 +63,7 @@ export function SnippetsGrid({ focused }: Props) {
   const onButton = useCallback((btn: ActionBtn) => {
     if (!imFocusedRef.current) return;
     if (snippets[selected]) {
-      runSinppet(snippets[selected].id, btn);
+      runSinppet(snippets[selected].snippet.id, btn);
     }
 
   }, [selected, snippets])

@@ -25,4 +25,5 @@ serde_json = "1"
 base64 = "0.22.1"
 tokio = { version = "1.49.0", features = ["time"] }
 gilrs = "0.11.1"
+serde_yml = "0.0.12"
 

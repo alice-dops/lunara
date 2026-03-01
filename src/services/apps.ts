@@ -1,12 +1,12 @@
 import { invoke } from "@tauri-apps/api/core"
-import { R_AppView, R_Snippet, R_SystemStatus } from "../types/types"
+import { R_AppView, R_SnippetView, R_SystemStatus } from "../types/types"
 import { ActionBtn } from "../contexts/lunarInputContext";
 
 export async function listApps(): Promise<R_AppView[]> {
 	return await invoke("list_apps");
 }
 
-export async function listSnippets(): Promise<R_Snippet[]> {
+export async function listSnippets(): Promise<R_SnippetView[]> {
 	return await invoke("list_snippets");
 }
 

@@ -1,0 +1,9 @@
+id: 04-brotato
+name: Brotato
+cmd:
+  - steam
+  - -gamepadui
+  - steam://rungameid/1942280
+wm_class: steam_app_1942280
+icon: /home/alice/work/clients/perso/git/malice/lunara/example/img/brotato.png
+bspwm_desktop: ^5

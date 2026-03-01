@@ -5,9 +5,14 @@ use std::sync::Mutex;
 
 use tauri::{Manager, State};
 
-use crate::manger::{
-    app_manager::AppManager, gamepad_manager::start_gilrs_forwarder,
-    snippets_manager::SnippetsManager,
+use crate::{
+    config::loader::load_config,
+    manger::{
+        app_manager::AppManager, gamepad_manager::start_gilrs_forwarder,
+        snippets_manager::SnippetsManager,
+    },
+    models::lunara_config::LunaraConfig,
+    system::window_manager_controller::{get_wm_from_name, WMState},
 };
 
 mod commands;
@@ -17,11 +22,25 @@ mod models;
 mod system;
 
 fn main() {
+    let conf = load_config();
+
     tauri::Builder::default()
+        .manage(Mutex::new(conf))
         .manage(Mutex::new(AppManager::new()))
         .manage(Mutex::new(SnippetsManager::new()))
+        .manage(WMState {
+            wm: Mutex::new(None),
+        })
         .setup(|app| {
+            let config: tauri::State<'_, Mutex<LunaraConfig>> = app.state();
+            let conf = config.lock().unwrap();
+
             let handle = app.handle();
+            {
+                let state: State<'_, WMState> = app.state();
+                *state.wm.lock().unwrap() =
+                    Some(get_wm_from_name(handle.clone(), &conf.window_manager)?);
+            }
             {
                 start_gilrs_forwarder(handle.clone());
             }

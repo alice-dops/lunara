@@ -1,5 +1,24 @@
 import { IconName } from "lucide-react/dynamic"
 
+export interface R_SnippetView {
+	snippet: R_Snippet
+	query?: string
+}
+
+export interface SnippetViewDisplay {
+	snippet: R_Snippet
+	query?: string
+	display: DisplaySnippet
+	parseError?: string
+}
+
+
+export interface DisplaySnippet {
+	name: string
+	icon: IconName
+	disable?: boolean
+}
+
 export interface R_Snippet {
 	id: string
 	name: string

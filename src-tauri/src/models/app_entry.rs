@@ -10,6 +10,10 @@ pub struct AppEntry {
     pub bspwm_desktop: Option<String>,
 }
 
+#[derive(serde::Serialize)]
+pub struct AppView {
+    pub app: AppEntry,
+}
 // impl AppEntry {
 //    fn start()
 // }

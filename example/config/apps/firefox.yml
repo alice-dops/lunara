@@ -1,0 +1,7 @@
+id: 03-firefox
+name: Firefox
+cmd:
+  - firefox-developer-edition
+wm_class: firefox
+icon: /home/alice/work/clients/perso/git/malice/lunara/example/img/firefox.png
+bspwm_desktop: ^2
