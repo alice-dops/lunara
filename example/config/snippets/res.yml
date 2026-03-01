@@ -1,0 +1,25 @@
+id: 02-res
+name: Resolution
+icon: monitor
+queryVars:
+  cmd: sh
+  args:
+    - -c
+    - |
+      if xrandr --query | grep -q "HDMI-1 connected 1920x1080"; then
+          echo '{"name":"Res: 2k"}'
+      else
+          echo '{"name":"Res: 4k"}'
+      fi
+executor:
+  - actionButton: A
+    cmd: sh
+    args:
+      - -c
+      - |
+        if xrandr --query | grep -q "HDMI-1 connected 1920x1080"; then
+          xrandr --output HDMI-1 --mode "1920x1080"
+        else
+          xrandr --output HDMI-1 --mode "3840x2160"
+        fi
+
