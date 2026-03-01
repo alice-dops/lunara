@@ -1,6 +1,6 @@
 # Maintainer:
 pkgname=lunara-git
-pkgver=0.1.0
+pkgver=0.2.0
 pkgrel=1
 pkgdesc="Home TV menue"
 arch=('x86_64' 'aarch64')
