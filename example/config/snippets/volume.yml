@@ -1,4 +1,4 @@
-id: 08-volume
+id: 01-volume
 name: Volume
 confirmation: false
 icon: volume-2
@@ -7,7 +7,7 @@ queryVars:
   args:
     - -c
     - |
-      v=$(amixer get Master | awk -F'[][]' 'END{print $2}' | tr -d '%'); printf '{"name":"Volume: %s%%","disable":%s,"icon":"%s"}\n' "$v" "$( [ "$v" -lt 20 ] && echo true || echo false )" "$( [ "$v" -gt 50 ] && echo volume-2 || echo volume )"
+      v=$(amixer get Master | awk -F'[][]' 'END{print $2}' | tr -d '%'); printf '{"name":"Vol: %s%%","icon":"%s"}\n' "$v" "$( [ "$v" -gt 50 ] && echo volume-2 || echo volume )"
 executor:
   - actionButton: B
     cmd: Volume
