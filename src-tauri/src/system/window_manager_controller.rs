@@ -1,17 +1,13 @@
 use std::sync::Mutex;
 
-use tauri::AppHandle;
-
 use crate::{
     models::app_entry::AppEntry,
-    system::{
-        bspwm_wm_controller::BspwmWMController,
-        command::{LunaraError, LunaraResult},
-    },
+    system::{bspwm_wm_controller::BspwmWMController, command::LunaraResult},
 };
 
 pub struct WMState {
-    pub wm: Mutex<Option<Box<dyn WindowManagerController + Send>>>,
+    // pub wm: Mutex<Option<Box<dyn WindowManagerController + Send>>>,
+    pub wm: Mutex<Box<dyn WindowManagerController + Send>>,
 }
 
 impl WMState {
@@ -20,16 +16,13 @@ impl WMState {
         F: FnOnce(&mut dyn WindowManagerController) -> LunaraResult<R>,
     {
         let mut guard = self.wm.lock().unwrap();
-        let wm = guard
-            .as_deref_mut()
-            .ok_or_else(|| LunaraError::CommandFailed("WM not initialized".into()))?;
-
+        let wm = guard.as_mut();
         f(wm)
     }
 }
 
 pub trait WindowManagerController: Send {
-    fn new(app_handle: AppHandle) -> Self
+    fn new() -> Self
     where
         Self: Sized;
 
@@ -43,11 +36,12 @@ pub trait WindowManagerController: Send {
 }
 
 pub fn get_wm_from_name(
-    app: AppHandle,
+    // app: AppHandle,
     name: &str,
 ) -> Result<Box<dyn WindowManagerController + Send>, String> {
     match name {
-        "bspwm" => Ok(Box::new(BspwmWMController::new(app))),
+        // "bspwm" => Ok(Box::new(BspwmWMController::new(app))),
+        "bspwm" => Ok(Box::new(BspwmWMController::new())),
         _ => Err(format!("Can't find WM for {name}")),
     }
 }

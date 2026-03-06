@@ -8,7 +8,7 @@ pub struct Snippet {
     pub confirmation: Option<bool>,
     pub icon: String,
     pub executor: Vec<Executor>,
-    pub query_vars: Option<CmdExec>,
+    pub query_vars: Option<SnippetQuery>,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
@@ -20,7 +20,8 @@ pub struct Executor {
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
-pub struct CmdExec {
+pub struct SnippetQuery {
+    pub time: Option<u64>,
     pub cmd: Option<String>,
     pub args: Option<Vec<String>>,
 }

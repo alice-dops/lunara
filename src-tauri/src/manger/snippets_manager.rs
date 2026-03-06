@@ -1,6 +1,11 @@
-use std::collections::HashMap;
+use std::{
+    collections::HashMap,
+    sync::{Arc, Mutex},
+    time::Duration,
+};
 
-use tauri::{AppHandle, Emitter};
+use tauri::{AppHandle, Emitter, Manager};
+use tokio::time::interval;
 
 use crate::{
     config,
@@ -34,6 +39,43 @@ fn run_snippset_query(snippet: &Snippet) -> Option<String> {
         }
     }
     None
+}
+
+pub fn start_snippets_monitor(app: AppHandle) {
+    println!("1");
+
+    let mgr = app.state::<std::sync::Mutex<SnippetsManager>>();
+    let mgr = mgr.lock().unwrap();
+
+    let jobs: Vec<(String, u64)> = mgr
+        .snippets
+        .iter()
+        .filter_map(|s| {
+            let t = s.query_vars.as_ref()?.time?;
+            Some((s.id.clone(), t))
+        })
+        .collect();
+    println!("2");
+
+    for (id, t) in jobs {
+        println!("Start thread for {:?} each {:?}s", id, t);
+
+        let app = app.clone();
+        tauri::async_runtime::spawn(async move {
+            let mut tick = interval(Duration::from_secs(t));
+            loop {
+                tick.tick().await;
+
+                // re-lock manager each tick
+                let mgr_state = app.state::<std::sync::Mutex<SnippetsManager>>();
+                let mut mgr = mgr_state.lock().unwrap();
+
+                if mgr.run_snippet_query_id(id.clone()) {
+                    mgr.send_event_updated(&app);
+                }
+            }
+        });
+    }
 }
 
 impl SnippetsManager {
@@ -74,6 +116,13 @@ impl SnippetsManager {
             let res = run_snippset_query(snippet);
             self.snippets_status.insert(snippet.id.clone(), res);
         }
+    }
+
+    fn run_snippet_query_id(&mut self, id: String) -> bool {
+        let Some(snippet) = self.snippets.iter().find(|snip| snip.id == id).cloned() else {
+            return false;
+        };
+        self.run_snippet_query(&snippet)
     }
 
     fn run_snippet_query(&mut self, snippet: &Snippet) -> bool {

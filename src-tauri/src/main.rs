@@ -8,8 +8,9 @@ use tauri::{Manager, State};
 use crate::{
     config::loader::load_config,
     manger::{
-        app_manager::AppManager, gamepad_manager::start_gilrs_forwarder,
-        snippets_manager::SnippetsManager,
+        app_manager::AppManager,
+        gamepad_manager::start_gilrs_forwarder,
+        snippets_manager::{start_snippets_monitor, SnippetsManager},
     },
     models::lunara_config::LunaraConfig,
     system::window_manager_controller::{get_wm_from_name, WMState},
@@ -23,24 +24,25 @@ mod system;
 
 fn main() {
     let conf = load_config();
+    let wm = get_wm_from_name(&conf.window_manager);
+    if let Err(e) = &wm {
+        eprintln!("{e}")
+    }
+
+    let wmb = wm.unwrap();
 
     tauri::Builder::default()
         .manage(Mutex::new(conf))
         .manage(Mutex::new(AppManager::new()))
         .manage(Mutex::new(SnippetsManager::new()))
         .manage(WMState {
-            wm: Mutex::new(None),
+            wm: Mutex::new(wmb),
         })
         .setup(|app| {
-            let config: tauri::State<'_, Mutex<LunaraConfig>> = app.state();
-            let conf = config.lock().unwrap();
+            // let config: tauri::State<'_, Mutex<LunaraConfig>> = app.state();
+            // let conf = config.lock().unwrap();
 
             let handle = app.handle();
-            {
-                let state: State<'_, WMState> = app.state();
-                *state.wm.lock().unwrap() =
-                    Some(get_wm_from_name(handle.clone(), &conf.window_manager)?);
-            }
             {
                 start_gilrs_forwarder(handle.clone());
             }
@@ -54,6 +56,7 @@ fn main() {
                 let mut mgr = state.lock().unwrap();
                 mgr.reload_config();
             }
+            start_snippets_monitor(app.handle().clone());
             {
                 system::monitor::start_system_monitor(handle.clone());
             }

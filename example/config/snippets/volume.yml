@@ -3,6 +3,7 @@ name: Volume
 confirmation: false
 icon: volume-2
 queryVars:
+  time: 1
   cmd: /bin/sh
   args:
     - -c

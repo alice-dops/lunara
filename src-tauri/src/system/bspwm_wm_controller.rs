@@ -13,7 +13,8 @@ pub struct BspwmWMController {
 }
 
 impl WindowManagerController for BspwmWMController {
-    fn new(_app_handle: tauri::AppHandle) -> Self {
+    // fn new(_app_handle: tauri::AppHandle) -> Self {
+    fn new() -> Self {
         return BspwmWMController {
             last_focused_desktop: None,
         };
