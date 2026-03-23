@@ -1,0 +1,34 @@
+windowManager: "bspwm"
+userName: "alice"
+gamepadKeymap:
+  global:
+    keys:
+      Mode:
+        home: true
+  lunara:
+    keys:
+      LeftTrigger:
+        cmd: "Volume"
+        args: [
+          "--dec"
+        ]
+      RightTrigger:
+        cmd: "Volume"
+        args: [
+          "--inc"
+        ]
+  "2":
+    stick_mode: mouse
+    keys:
+      LeftTrigger:
+        mouse: SU
+      RightTrigger:
+        mouse: SD
+      North:
+        keyboard:
+          modifier: [ctrl]
+          keys: ["t"]
+      South:
+        mouse: "L"
+      East:
+        mouse: "R"
