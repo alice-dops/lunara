@@ -4,11 +4,7 @@ use tauri::{AppHandle, State};
 
 use crate::{
     manger::{app_manager::AppManager, snippets_manager::SnippetsManager},
-    models::{
-        app_entry::AppView,
-        snipsets::{Snippet, SnippetView},
-        system_status::SystemStatus,
-    },
+    models::{app_entry::AppView, snipsets::SnippetView, system_status::SystemStatus},
     system::{collect::collect_system_status, window_manager_controller::WMState},
 };
 

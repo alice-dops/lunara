@@ -33,6 +33,8 @@ pub trait WindowManagerController: Send {
     fn focus_last_app(&mut self) -> LunaraResult<()>;
 
     fn launch_or_focus(&mut self, app: &AppEntry) -> LunaraResult<()>;
+
+    fn get_current_focused(&mut self) -> LunaraResult<String>;
 }
 
 pub fn get_wm_from_name(

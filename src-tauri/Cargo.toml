@@ -7,6 +7,10 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+# [features]
+# default = ["x11rb"]
+# x11rb = ["dep:x11rb"]
+
 [lib]
 # The `_lib` suffix may seem redundant but it is necessary
 # to make the lib name unique and wouldn't conflict with the bin name.
@@ -24,6 +28,8 @@ serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 base64 = "0.22.1"
 tokio = { version = "1.49.0", features = ["time"] }
-gilrs = "0.11.1"
+gilrs = { version = "0.11.1", features = ["serde-serialize"] }
 serde_yml = "0.0.12"
+enigo = { version = "0.6.1", features = ["serde"] }
+# x11rb = { version = "0.13.2", optional = true }
 

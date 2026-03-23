@@ -1,7 +1,5 @@
 use crate::models::{app_entry::AppEntry, lunara_config::LunaraConfig, snipsets::Snippet};
 use base64::{engine::general_purpose, Engine as _};
-use serde::Deserialize;
-use serde_yml::Value;
 use std::{env, fs, path::PathBuf};
 
 fn icon_to_data_url(path: &str) -> Option<String> {
@@ -76,9 +74,6 @@ pub fn load_snippets() -> Vec<Snippet> {
             continue;
         }
         if let Ok(s) = fs::read_to_string(&path) {
-            // for document in serde_yml::Deserializer::from_str(&s) {
-            //     let value = Value::deserialize(document)?;
-            // }
             match serde_yml::from_str::<Snippet>(&s) {
                 Ok(app) => out.push(app),
                 Err(e) => {

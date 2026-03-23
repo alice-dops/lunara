@@ -1,8 +1,4 @@
-use std::{
-    collections::HashMap,
-    sync::{Arc, Mutex},
-    time::Duration,
-};
+use std::{collections::HashMap, time::Duration};
 
 use tauri::{AppHandle, Emitter, Manager};
 use tokio::time::interval;

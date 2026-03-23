@@ -35,6 +35,13 @@ impl WindowManagerController for BspwmWMController {
         }
     }
 
+    fn get_current_focused(&mut self) -> LunaraResult<String> {
+        match BspwmWMController::get_current_dekstop() {
+            Some(s) => Ok(s),
+            _ => Err(LunaraError::CommandFailed("unkown".to_string())),
+        }
+    }
+
     fn focus_lunara(&mut self) -> LunaraResult<()> {
         self.last_focused_desktop = BspwmWMController::get_current_dekstop();
         run_no_output("bspc", &["desktop", "-f", "^1"])

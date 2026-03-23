@@ -12,7 +12,6 @@ use crate::{
         gamepad_manager::start_gilrs_forwarder,
         snippets_manager::{start_snippets_monitor, SnippetsManager},
     },
-    models::lunara_config::LunaraConfig,
     system::window_manager_controller::{get_wm_from_name, WMState},
 };
 
@@ -32,7 +31,7 @@ fn main() {
     let wmb = wm.unwrap();
 
     tauri::Builder::default()
-        .manage(Mutex::new(conf))
+        .manage(Mutex::new(conf.clone()))
         .manage(Mutex::new(AppManager::new()))
         .manage(Mutex::new(SnippetsManager::new()))
         .manage(WMState {
@@ -44,7 +43,7 @@ fn main() {
 
             let handle = app.handle();
             {
-                start_gilrs_forwarder(handle.clone());
+                start_gilrs_forwarder(handle.clone(), conf);
             }
             {
                 let state: State<'_, Mutex<AppManager>> = app.state();
