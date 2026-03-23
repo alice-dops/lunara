@@ -1,5 +1,9 @@
 windowManager: "bspwm"
 userName: "Alice & Mélodie"
+globalKeymap:
+  keys:
+    Mode:
+      home: true
 lunaraKeymap:
   keys:
     LeftTrigger:

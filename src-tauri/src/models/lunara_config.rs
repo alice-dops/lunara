@@ -35,7 +35,7 @@ pub struct LunaraConfigGamapedKeyEntry {
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct LunaraConfigKeyboard {
-    pub modifer: Option<Vec<Key>>,
+    pub modifier: Option<Vec<Key>>,
     pub keys: Vec<char>,
 }
 

@@ -94,7 +94,7 @@ pub fn start_gilrs_forwarder(app: AppHandle, config: LunaraConfig) {
         // let (x11, _) = match x11rb::connect(None) {
         //     Ok(conn) => conn,
         //     Err(err) => {
-        //         println!("Can't open X11 connection. If your desktop doesn't run X11, rebuild this binary without x11 features: {err:?}");
+        // println!("Can't open X11 connection. If your desktop doesn't run X11, rebuild this binary without x11 features: {err:?}");
         //         return;
         //     }
         // };
@@ -105,9 +105,6 @@ pub fn start_gilrs_forwarder(app: AppHandle, config: LunaraConfig) {
                 match ev.event {
                     EventType::ButtonPressed(btn, code) => {
                         manager.button_pressed_releassed(true, ev.time, btn, code);
-                    }
-                    EventType::ButtonRepeated(btn, code) => {
-                        manager.button_pressed_releassed(false, ev.time, btn, code);
                     }
                     EventType::ButtonReleased(btn, code) => {
                         manager.button_pressed_releassed(false, ev.time, btn, code);
@@ -191,7 +188,7 @@ impl GamepadManager {
     }
 
     fn exec_keyboard_binding(&mut self, keyboard: &LunaraConfigKeyboard) {
-        if let Some(modifiers) = &keyboard.modifer {
+        if let Some(modifiers) = &keyboard.modifier {
             for &modifier in modifiers {
                 let _ = self.engine.key(modifier, enigo::Direction::Press);
             }
@@ -203,7 +200,7 @@ impl GamepadManager {
                 .key(enigo::Key::Unicode(ch), enigo::Direction::Click);
         }
 
-        if let Some(modifiers) = &keyboard.modifer {
+        if let Some(modifiers) = &keyboard.modifier {
             for &modifier in modifiers.iter().rev() {
                 let _ = self.engine.key(modifier, enigo::Direction::Release);
             }
@@ -238,6 +235,9 @@ impl GamepadManager {
             }
 
             if btn.is_action() {
+                if press {
+                    return;
+                }
                 if let Some(label) = match btn {
                     Button::North => Some("Y"),
                     Button::South => Some("A"),
