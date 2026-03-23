@@ -1,24 +1,20 @@
 windowManager: "bspwm"
-userName: "alice"
-gamepadKeymap:
-  global:
-    keys:
-      Mode:
-        home: true
-  lunara:
-    keys:
-      LeftTrigger:
-        cmd: "Volume"
-        args: [
-          "--dec"
-        ]
-      RightTrigger:
-        cmd: "Volume"
-        args: [
-          "--inc"
-        ]
+userName: "Alice & Mélodie"
+lunaraKeymap:
+  keys:
+    LeftTrigger:
+      cmd: "Volume"
+      args: [
+        "--dec"
+      ]
+    RightTrigger:
+      cmd: "Volume"
+      args: [
+        "--inc"
+      ]
+desktopKeymap:
   "2":
-    stick_mode: mouse
+    stickMode: mouse
     keys:
       LeftTrigger:
         mouse: SU

@@ -10,7 +10,9 @@ use serde::{Deserialize, Serialize};
 pub struct LunaraConfig {
     pub window_manager: String,
     pub user_name: String,
-    pub gamepad_keymap: HashMap<String, LunaraConfigGamepadKeymapEntry>,
+    pub global_keymap: LunaraConfigGamepadKeymapEntry,
+    pub lunara_keymap: LunaraConfigGamepadKeymapEntry,
+    pub desktop_keymap: HashMap<String, LunaraConfigGamepadKeymapEntry>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -54,11 +56,30 @@ impl Default for LunaraConfig {
             .ok()
             .filter(|s| !s.trim().is_empty())
             .unwrap_or_else(|| "bspwm".to_string());
+        let mut d_map: HashMap<Button, LunaraConfigGamapedKeyEntry> = HashMap::new();
+        d_map.insert(
+            Button::Mode,
+            LunaraConfigGamapedKeyEntry {
+                home: true,
+                mouse: None,
+                keyboard: None,
+                cmd: None,
+                args: None,
+            },
+        );
 
         LunaraConfig {
             window_manager: wm,
             user_name: "Alice".to_string(),
-            gamepad_keymap: HashMap::new(),
+            global_keymap: LunaraConfigGamepadKeymapEntry {
+                stick_mode: LunaraConfigStickMode::None,
+                keys: d_map,
+            },
+            lunara_keymap: LunaraConfigGamepadKeymapEntry {
+                stick_mode: LunaraConfigStickMode::None,
+                keys: HashMap::new(),
+            },
+            desktop_keymap: HashMap::new(),
         }
     }
 }

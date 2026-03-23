@@ -1,7 +1,6 @@
 use enigo::{Enigo, Key, Keyboard, Mouse, Settings};
 use gilrs::{ev::Code, Axis, Button, EventType, Gilrs};
 use std::{
-    collections::HashMap,
     thread,
     time::{Duration, SystemTime},
 };
@@ -18,8 +17,6 @@ use crate::{
 const DEADZONE: f32 = 0.35;
 const INIT_DELAY_MS: u128 = 250;
 const REPEAT_DELAY_MS: u128 = 200;
-const LUNARA_CONFIG_FOCUS_GLOBAL: &str = "global";
-const LUNARA_CONFIG_FOCUS_LUNARA: &str = "lunara";
 
 const MOUSE_SPEED: f32 = 16.;
 
@@ -75,8 +72,6 @@ impl Direction {
 pub struct GamepadManager {
     app: AppHandle,
     config: LunaraConfig,
-    global_keymap: LunaraConfigGamepadKeymapEntry,
-    lunara_keymap: Option<LunaraConfigGamepadKeymapEntry>,
     current_focus: String,
     current_focus_keymap: Option<LunaraConfigGamepadKeymapEntry>,
     engine: Enigo,
@@ -139,35 +134,10 @@ impl GamepadManager {
     pub fn new(app: AppHandle, config: LunaraConfig) -> Self {
         println!("{:?}", config);
         let win = app.get_webview_window("main").unwrap();
-        let mut d_map: HashMap<Button, LunaraConfigGamapedKeyEntry> = HashMap::new();
-        d_map.insert(
-            Button::Mode,
-            LunaraConfigGamapedKeyEntry {
-                home: true,
-                mouse: None,
-                keyboard: None,
-                cmd: None,
-                args: None,
-            },
-        );
-        let default_global = LunaraConfigGamepadKeymapEntry {
-            stick_mode: LunaraConfigStickMode::None,
-            keys: d_map,
-        };
-        let global_keymap = config
-            .gamepad_keymap
-            .get(&LUNARA_CONFIG_FOCUS_GLOBAL.to_string())
-            .unwrap_or(&default_global)
-            .clone();
         Self {
             app,
             config: config.clone(),
-            global_keymap: global_keymap,
             current_focus: "".to_string(),
-            lunara_keymap: config
-                .gamepad_keymap
-                .get(&LUNARA_CONFIG_FOCUS_LUNARA.to_string())
-                .cloned(),
             current_focus_keymap: None,
             engine: Enigo::new(&Settings::default()).unwrap(),
             stick_x: 0.,
@@ -183,7 +153,7 @@ impl GamepadManager {
     fn refresh_current_focused(&mut self) {
         let state: tauri::State<'_, WMState> = self.app.state();
         if let Ok(v) = state.with_wm(|wm| wm.get_current_focused()) {
-            self.current_focus_keymap = self.config.gamepad_keymap.get(&v).cloned();
+            self.current_focus_keymap = self.config.desktop_keymap.get(&v).cloned();
             self.current_focus = v;
         }
     }
@@ -247,8 +217,16 @@ impl GamepadManager {
         btn: Button,
         _: Code,
     ) {
+        // app
+        if let Some(km) = &self.current_focus_keymap {
+            if let Some(k) = km.keys.get(&btn) {
+                self.exec_lunara_gampad_key(press, k.clone());
+                return;
+            }
+        }
+
         // global
-        if let Some(k) = self.global_keymap.keys.get(&btn) {
+        if let Some(k) = self.config.global_keymap.keys.get(&btn) {
             self.exec_lunara_gampad_key(press, k.clone());
         }
 
@@ -274,20 +252,11 @@ impl GamepadManager {
                 }
             }
 
-            if let Some(km) = &self.lunara_keymap {
-                if let Some(k) = km.keys.get(&btn) {
-                    self.exec_lunara_gampad_key(press, k.clone());
-                }
+            if let Some(k) = self.config.lunara_keymap.keys.get(&btn) {
+                self.exec_lunara_gampad_key(press, k.clone());
             }
 
             return;
-        }
-
-        // app
-        if let Some(km) = &self.current_focus_keymap {
-            if let Some(k) = km.keys.get(&btn) {
-                self.exec_lunara_gampad_key(press, k.clone());
-            }
         }
     }
 
@@ -328,7 +297,7 @@ impl GamepadManager {
             return;
         }
         if let Some(km) = &self.current_focus_keymap {
-            if km.stick_mode == LunaraConfigStickMode::None {
+            if km.stick_mode == LunaraConfigStickMode::Mouse {
                 let _ = self.engine.move_mouse(
                     (self.stick_x * MOUSE_SPEED) as i32,
                     (self.stick_y * MOUSE_SPEED * -1.) as i32,
