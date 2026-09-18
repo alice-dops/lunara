@@ -34,6 +34,7 @@ fn config_file() -> PathBuf {
 
 pub fn load_config() -> LunaraConfig {
     let path = config_file();
+    std::println!("{:?}", path);
     if path.exists() {
         if let Ok(s) = std::fs::read_to_string(&path) {
             match serde_yml::from_str::<LunaraConfig>(&s) {

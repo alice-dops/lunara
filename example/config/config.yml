@@ -8,17 +8,14 @@ lunaraKeymap:
   keys:
     LeftTrigger:
       cmd: "Volume"
-      args: [
-        "--dec"
-      ]
+      args: ["--dec"]
     RightTrigger:
       cmd: "Volume"
-      args: [
-        "--inc"
-      ]
+      args: ["--inc"]
 desktopKeymap:
   "2":
-    stickMode: mouse
+    leftStickMode: mouse
+    rightStickMode: scroll
     keys:
       LeftTrigger:
         mouse: SU

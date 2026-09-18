@@ -19,7 +19,10 @@ pub struct LunaraConfig {
 #[serde(default)]
 #[serde(rename_all = "camelCase")]
 pub struct LunaraConfigGamepadKeymapEntry {
-    pub stick_mode: LunaraConfigStickMode,
+    // keep for legacy name
+    #[serde(alias = "stickMode")]
+    pub left_stick_mode: LunaraConfigStickMode,
+    pub right_stick_mode: LunaraConfigStickMode,
     pub keys: HashMap<Button, LunaraConfigGamapedKeyEntry>,
 }
 
@@ -45,6 +48,8 @@ pub enum LunaraConfigStickMode {
     Mouse,
     #[serde(alias = "arrow")]
     Arrow,
+    #[serde(alias = "scroll")]
+    Scroll,
     #[serde(alias = "none")]
     #[default]
     None,
@@ -72,13 +77,11 @@ impl Default for LunaraConfig {
             window_manager: wm,
             user_name: "Alice".to_string(),
             global_keymap: LunaraConfigGamepadKeymapEntry {
-                stick_mode: LunaraConfigStickMode::None,
+                left_stick_mode: LunaraConfigStickMode::None,
+                right_stick_mode: LunaraConfigStickMode::None,
                 keys: d_map,
             },
-            lunara_keymap: LunaraConfigGamepadKeymapEntry {
-                stick_mode: LunaraConfigStickMode::None,
-                keys: HashMap::new(),
-            },
+            lunara_keymap: LunaraConfigGamepadKeymapEntry::default(),
             desktop_keymap: HashMap::new(),
         }
     }
@@ -87,7 +90,8 @@ impl Default for LunaraConfig {
 impl Default for LunaraConfigGamepadKeymapEntry {
     fn default() -> Self {
         LunaraConfigGamepadKeymapEntry {
-            stick_mode: LunaraConfigStickMode::None,
+            left_stick_mode: LunaraConfigStickMode::None,
+            right_stick_mode: LunaraConfigStickMode::None,
             keys: HashMap::new(),
         }
     }
